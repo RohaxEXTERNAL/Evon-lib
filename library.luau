@@ -82,7 +82,7 @@ Library.Themes = {
 }
 
 Library.Fonts = {
-    Inter = Enum.Font.Inter,
+    Inter = Enum.Font.SourceSans,
     SegoeUI = Enum.Font.SegoeUI,
     Roboto = Enum.Font.Roboto,
     JetBrainsMono = Enum.Font.Code,
