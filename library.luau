@@ -83,8 +83,8 @@ Library.Themes = {
 
 Library.Fonts = {
     Inter = Enum.Font.SourceSans,
-    SegoeUI = Enum.Font.SegoeUI,
-    Roboto = Enum.Font.Roboto,
+    SegoeUI = Enum.Font.SourceSans,
+    Roboto = Enum.Font.SourceSans,
     JetBrainsMono = Enum.Font.Code,
     SFPro = Enum.Font.SourceSans,
     Poppins = Enum.Font.FredokaOne
