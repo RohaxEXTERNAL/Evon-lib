@@ -214,8 +214,8 @@ function Library:CreateLabel(Properties, IsHud)
     return Library:Create(_Instance, Properties);
 end;
 
-function Library:MakeDraggable(Instance, Cutoff)
-    Instance.Active = true;
+function Library:MakeDraggable(Obj, Cutoff)
+    Obj.Active = true;
 
     -- Build the ghost frame (transparent fill, white stroke border)
     local GhostFrame = Instance.new('Frame');
@@ -231,11 +231,11 @@ function Library:MakeDraggable(Instance, Cutoff)
     GhostStroke.LineJoinMode = Enum.LineJoinMode.Round;
     GhostStroke.Parent       = GhostFrame;
 
-    Instance.InputBegan:Connect(function(Input)
+    Obj.InputBegan:Connect(function(Input)
         if Input.UserInputType == Enum.UserInputType.MouseButton1 then
             local ObjPos = Vector2.new(
-                Mouse.X - Instance.AbsolutePosition.X,
-                Mouse.Y - Instance.AbsolutePosition.Y
+                Mouse.X - Obj.AbsolutePosition.X,
+                Mouse.Y - Obj.AbsolutePosition.Y
             );
 
             if ObjPos.Y > (Cutoff or 40) then
@@ -243,7 +243,7 @@ function Library:MakeDraggable(Instance, Cutoff)
             end;
 
             -- Snap the ghost exactly on top of the window
-            GhostFrame.Size     = UDim2.fromOffset(Instance.AbsoluteSize.X, Instance.AbsoluteSize.Y);
+            GhostFrame.Size     = UDim2.fromOffset(Obj.AbsoluteSize.X, Obj.AbsoluteSize.Y);
             GhostFrame.Position = UDim2.fromOffset(Mouse.X - ObjPos.X, Mouse.Y - ObjPos.Y);
             GhostFrame.Visible  = true;
 
@@ -255,9 +255,9 @@ function Library:MakeDraggable(Instance, Cutoff)
             GhostFrame.Visible = false;
 
             -- Snap window to ghost's final position
-            Instance.Position = UDim2.new(
-                0, Mouse.X - ObjPos.X + (Instance.Size.X.Offset * Instance.AnchorPoint.X),
-                0, Mouse.Y - ObjPos.Y + (Instance.Size.Y.Offset * Instance.AnchorPoint.Y)
+            Obj.Position = UDim2.new(
+                0, Mouse.X - ObjPos.X + (Obj.Size.X.Offset * Obj.AnchorPoint.X),
+                0, Mouse.Y - ObjPos.Y + (Obj.Size.Y.Offset * Obj.AnchorPoint.Y)
             );
         end;
     end)
