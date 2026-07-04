@@ -228,7 +228,8 @@ function Library:MakeDraggable(Instance, Cutoff, ContentFrame)
                 return;
             end;
 
-            -- Outline-drag: hide contents, show a wireframe ghost
+            -- Outline-drag: hide all window content, show a wireframe ghost
+            Instance.BackgroundTransparency = 1;
             if ContentFrame then
                 ContentFrame.Visible = false;
             end;
@@ -253,9 +254,10 @@ function Library:MakeDraggable(Instance, Cutoff, ContentFrame)
                 RenderStepped:Wait();
             end;
 
-            -- Snap window to final position, restore contents
+            -- Snap window, restore everything
             Instance.Position = Outline.Position;
             Outline:Destroy();
+            Instance.BackgroundTransparency = 0;
 
             if ContentFrame then
                 ContentFrame.Visible = true;
