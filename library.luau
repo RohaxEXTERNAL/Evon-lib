@@ -1920,34 +1920,36 @@ do
         local Groupbox = self;
         local Container = Groupbox.Container;
 
-        local ToggleOuter = Library:Create('Frame', {
+        local ToggleBorder = Library:Create('Frame', {
             BackgroundColor3 = Color3.new(0, 0, 0);
             BorderColor3 = Color3.new(0, 0, 0);
             Size = UDim2.new(0, 13, 0, 13);
             ZIndex = 5;
             Parent = Container;
         });
-
-        Library:AddToRegistry(ToggleOuter, {
-            BorderColor3 = 'Black';
+        Library:AddToRegistry(ToggleBorder, { BorderColor3 = 'Black' });
+        Library:Create('UIGradient', {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 30))
+            });
+            Parent = ToggleBorder;
         });
+        Library:Create('UICorner', { CornerRadius = UDim.new(0, 4), Parent = ToggleBorder });
 
         local ToggleInner = Library:Create('Frame', {
             BackgroundColor3 = Library.MainColor;
             BorderColor3 = Library.OutlineColor;
             BorderMode = Enum.BorderMode.Inset;
-            Size = UDim2.new(1, -2, 1, -2);
-            Position = UDim2.new(0, 1, 0, 1);
+            Size = UDim2.new(1, -4, 1, -4);
+            Position = UDim2.new(0, 2, 0, 2);
             ZIndex = 6;
-            Parent = ToggleOuter;
+            Parent = ToggleBorder;
         });
-
-        Library:AddToRegistry(ToggleInner, {
-            BackgroundColor3 = 'MainColor';
-            BorderColor3 = 'OutlineColor';
-        });
-
-        local ToggleLabel = Library:CreateLabel({
+        Library:AddToRegistry(ToggleInner, { BackgroundColor3 = 'MainColor', BorderColor3 = 'OutlineColor' });
+        Library:Create('UICorner', { CornerRadius = UDim.new(0, 4), Parent = ToggleInner });
+        -- Hover animation
+        Library:OnHighlight(ToggleBorder, ToggleBorder, { BorderColor3 = 'AccentColor' }, { BorderColor3 = 'Black' });local ToggleLabel = Library:CreateLabel({
             Size = UDim2.new(0, 216, 1, 0);
             Position = UDim2.new(1, 6, 0, 0);
             TextSize = 14;
@@ -2291,13 +2293,25 @@ do
             end;
         end;
 
-        local DropdownOuter = Library:Create('Frame', {
+        local DropdownBorder = Library:Create('Frame', {
             BackgroundColor3 = Color3.new(0, 0, 0);
             BorderColor3 = Color3.new(0, 0, 0);
             Size = UDim2.new(1, -4, 0, 20);
             ZIndex = 5;
             Parent = Container;
         });
+        Library:AddToRegistry(DropdownBorder, { BorderColor3 = 'Black' });
+        Library:Create('UIGradient', {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 30))
+            });
+            Parent = DropdownBorder;
+        });
+        Library:Create('UICorner', { CornerRadius = UDim.new(0, 4), Parent = DropdownBorder });
+        -- Hover animation
+        Library:OnHighlight(DropdownBorder, DropdownBorder, { BorderColor3 = 'AccentColor' }, { BorderColor3 = 'Black' });
+        
 
         Library:AddToRegistry(DropdownOuter, {
             BorderColor3 = 'Black';
