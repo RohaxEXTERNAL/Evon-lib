@@ -3135,7 +3135,7 @@ function Library:CreateWindow(...)
 
     -- Floating tab bar — lives above Outer, detached from the window border
     local TabBarFrame = Library:Create('Frame', {
-        BackgroundTransparency = 1;
+        BackgroundColor3 = Color3.new(0, 0, 0);
         BorderSizePixel = 0;
         ClipsDescendants = false;
         Position = UDim2.fromOffset(0, 0);
@@ -3228,7 +3228,7 @@ function Library:CreateWindow(...)
 
         local TabButton = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BackgroundTransparency = 1;
+            BackgroundTransparency = 0;
             BorderSizePixel = 0;
             Size = UDim2.new(0, TabButtonWidth + 8 + 4, 1, 0);
             ZIndex = 5;
