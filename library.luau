@@ -2293,29 +2293,22 @@ do
             end;
         end;
 
-        local DropdownBorder = Library:Create('Frame', {
+        local DropdownOuter = Library:Create('Frame', {
             BackgroundColor3 = Color3.new(0, 0, 0);
             BorderColor3 = Color3.new(0, 0, 0);
             Size = UDim2.new(1, -4, 0, 20);
             ZIndex = 5;
             Parent = Container;
         });
-        Library:AddToRegistry(DropdownBorder, { BorderColor3 = 'Black' });
+        Library:AddToRegistry(DropdownOuter, { BorderColor3 = 'Black' });
         Library:Create('UIGradient', {
             Color = ColorSequence.new({
                 ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)),
                 ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 30))
             });
-            Parent = DropdownBorder;
+            Parent = DropdownOuter;
         });
-        Library:Create('UICorner', { CornerRadius = UDim.new(0, 4), Parent = DropdownBorder });
-        -- Hover animation
-        Library:OnHighlight(DropdownBorder, DropdownBorder, { BorderColor3 = 'AccentColor' }, { BorderColor3 = 'Black' });
-        
-
-        Library:AddToRegistry(DropdownOuter, {
-            BorderColor3 = 'Black';
-        });
+        Library:Create('UICorner', { CornerRadius = UDim.new(0, 4), Parent = DropdownOuter });
 
         local DropdownInner = Library:Create('Frame', {
             BackgroundColor3 = Library.MainColor;
