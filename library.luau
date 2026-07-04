@@ -37,7 +37,7 @@ local Library = {
     RiskColor = Color3.fromRGB(255, 50, 50),
 
     Black = Color3.new(0, 0, 0);
-    Font = Enum.Font.Code,
+    Font = Enum.Font.Gotham,
 
     OpenedFrames = {};
     DependencyBoxes = {};
@@ -3090,15 +3090,26 @@ function Library:CreateWindow(...)
         Tabs = {};
     };
 
-    local Outer = Library:Create('Frame', {
+    -- WrapperFrame: transparent root that holds the floating tab bar + main panel
+    local WrapperFrame = Library:Create('Frame', {
         AnchorPoint = Config.AnchorPoint,
-        BackgroundColor3 = Color3.new(0, 0, 0);
+        BackgroundTransparency = 1;
         BorderSizePixel = 0;
+        ClipsDescendants = false;
         Position = Config.Position,
-        Size = Config.Size,
+        Size = UDim2.fromOffset(Config.Size.X.Offset, Config.Size.Y.Offset + 26),
         Visible = false;
         ZIndex = 1;
         Parent = ScreenGui;
+    });
+
+    local Outer = Library:Create('Frame', {
+        BackgroundColor3 = Color3.new(0, 0, 0);
+        BorderSizePixel = 0;
+        Position = UDim2.fromOffset(0, 26);
+        Size = Config.Size,
+        ZIndex = 1;
+        Parent = WrapperFrame;
     });
 
 
@@ -3122,7 +3133,18 @@ function Library:CreateWindow(...)
         BackgroundColor3 = 'MainColor';
     });
 
-    Library:MakeDraggable(Outer, 25);
+    -- Floating tab bar — lives above Outer, detached from the window border
+    local TabBarFrame = Library:Create('Frame', {
+        BackgroundTransparency = 1;
+        BorderSizePixel = 0;
+        ClipsDescendants = false;
+        Position = UDim2.fromOffset(0, 0);
+        Size = UDim2.fromOffset(Config.Size.X.Offset, 26);
+        ZIndex = 5;
+        Parent = WrapperFrame;
+    });
+
+    Library:MakeDraggable(WrapperFrame, 26);
 
 
     local WindowLabel = Library:CreateLabel({
@@ -3164,10 +3186,10 @@ function Library:CreateWindow(...)
 
     local TabArea = Library:Create('Frame', {
         BackgroundTransparency = 1;
-        Position = UDim2.new(0, 8, 0, 8);
-        Size = UDim2.new(1, -16, 0, 21);
-        ZIndex = 1;
-        Parent = MainSectionInner;
+        Position = UDim2.new(0, 8, 0, 3);
+        Size = UDim2.new(1, -16, 1, -3);
+        ZIndex = 5;
+        Parent = TabBarFrame;
     });
 
     local TabListLayout = Library:Create('UIListLayout', {
@@ -3180,8 +3202,8 @@ function Library:CreateWindow(...)
     local TabContainer = Library:Create('Frame', {
         BackgroundColor3 = Library.MainColor;
         BorderColor3 = Library.OutlineColor;
-        Position = UDim2.new(0, 8, 0, 30);
-        Size = UDim2.new(1, -16, 1, -38);
+        Position = UDim2.new(0, 8, 0, 8);
+        Size = UDim2.new(1, -16, 1, -16);
         ZIndex = 2;
         Parent = MainSectionInner;
     });
@@ -3206,37 +3228,38 @@ function Library:CreateWindow(...)
 
         local TabButton = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BorderColor3 = Library.OutlineColor;
+            BackgroundTransparency = 1;
+            BorderSizePixel = 0;
             Size = UDim2.new(0, TabButtonWidth + 8 + 4, 1, 0);
-            ZIndex = 1;
+            ZIndex = 5;
             Parent = TabArea;
         });
 
         Library:AddToRegistry(TabButton, {
             BackgroundColor3 = 'BackgroundColor';
-            BorderColor3 = 'OutlineColor';
         });
 
         local TabButtonLabel = Library:CreateLabel({
             Position = UDim2.new(0, 0, 0, 0);
-            Size = UDim2.new(1, 0, 1, -1);
+            Size = UDim2.new(1, 0, 1, -2);
             Text = Name;
-            ZIndex = 1;
+            ZIndex = 5;
             Parent = TabButton;
         });
 
+        -- Accent underline shown below the active tab
         local Blocker = Library:Create('Frame', {
-            BackgroundColor3 = Library.MainColor;
+            BackgroundColor3 = Library.AccentColor;
             BorderSizePixel = 0;
-            Position = UDim2.new(0, 0, 1, 0);
-            Size = UDim2.new(1, 0, 0, 1);
+            Position = UDim2.new(0, 0, 1, -2);
+            Size = UDim2.new(1, 0, 0, 2);
             BackgroundTransparency = 1;
-            ZIndex = 3;
+            ZIndex = 6;
             Parent = TabButton;
         });
 
         Library:AddToRegistry(Blocker, {
-            BackgroundColor3 = 'MainColor';
+            BackgroundColor3 = 'AccentColor';
         });
 
         local TabFrame = Library:Create('Frame', {
@@ -3303,15 +3326,11 @@ function Library:CreateWindow(...)
             end;
 
             Blocker.BackgroundTransparency = 0;
-            TabButton.BackgroundColor3 = Library.MainColor;
-            Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'MainColor';
             TabFrame.Visible = true;
         end;
 
         function Tab:HideTab()
             Blocker.BackgroundTransparency = 1;
-            TabButton.BackgroundColor3 = Library.BackgroundColor;
-            Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'BackgroundColor';
             TabFrame.Visible = false;
         end;
 
@@ -3667,7 +3686,7 @@ function Library:CreateWindow(...)
 
         if Toggled then
             -- A bit scuffed, but if we're going from not toggled -> toggled we want to show the frame immediately so that the fade is visible.
-            Outer.Visible = true;
+            WrapperFrame.Visible = true;
 
             task.spawn(function()
                 -- TODO: add cursor fade?
@@ -3709,7 +3728,7 @@ function Library:CreateWindow(...)
             end);
         end;
 
-        for _, Desc in next, Outer:GetDescendants() do
+        for _, Desc in next, WrapperFrame:GetDescendants() do
             local Properties = {};
 
             if Desc:IsA('ImageLabel') then
@@ -3745,7 +3764,7 @@ function Library:CreateWindow(...)
 
         task.wait(FadeTime);
 
-        Outer.Visible = Toggled;
+        WrapperFrame.Visible = Toggled;
 
         Fading = false;
     end
