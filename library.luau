@@ -214,8 +214,22 @@ function Library:CreateLabel(Properties, IsHud)
     return Library:Create(_Instance, Properties);
 end;
 
-function Library:MakeDraggable(Instance, Cutoff, ContentFrame)
+function Library:MakeDraggable(Instance, Cutoff)
     Instance.Active = true;
+
+    -- Build the ghost frame (transparent fill, white stroke border)
+    local GhostFrame = Instance.new('Frame');
+    GhostFrame.BackgroundTransparency = 1;
+    GhostFrame.BorderSizePixel        = 0;
+    GhostFrame.ZIndex                 = 9999;
+    GhostFrame.Visible                = false;
+    GhostFrame.Parent                 = ScreenGui;
+
+    local GhostStroke        = Instance.new('UIStroke');
+    GhostStroke.Color        = Color3.new(1, 1, 1);
+    GhostStroke.Thickness    = 2;
+    GhostStroke.LineJoinMode = Enum.LineJoinMode.Round;
+    GhostStroke.Parent       = GhostFrame;
 
     Instance.InputBegan:Connect(function(Input)
         if Input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -228,40 +242,23 @@ function Library:MakeDraggable(Instance, Cutoff, ContentFrame)
                 return;
             end;
 
-            -- Outline-drag: hide all window content, show a wireframe ghost
-            Instance.BackgroundTransparency = 1;
-            if ContentFrame then
-                ContentFrame.Visible = false;
-            end;
-
-            local Outline = Instance.new('Frame');
-            Outline.BackgroundTransparency = 1;
-            Outline.BorderSizePixel = 2;
-            Outline.BorderColor3 = Library.AccentColor;
-            Outline.Size = Instance.Size;
-            Outline.Position = Instance.Position;
-            Outline.ZIndex = 200;
-            Outline.Parent = ScreenGui;
+            -- Snap the ghost exactly on top of the window
+            GhostFrame.Size     = UDim2.fromOffset(Instance.AbsoluteSize.X, Instance.AbsoluteSize.Y);
+            GhostFrame.Position = UDim2.fromOffset(Mouse.X - ObjPos.X, Mouse.Y - ObjPos.Y);
+            GhostFrame.Visible  = true;
 
             while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
-                local NewPos = UDim2.new(
-                    0,
-                    Mouse.X - ObjPos.X + (Instance.Size.X.Offset * Instance.AnchorPoint.X),
-                    0,
-                    Mouse.Y - ObjPos.Y + (Instance.Size.Y.Offset * Instance.AnchorPoint.Y)
-                );
-                Outline.Position = NewPos;
+                GhostFrame.Position = UDim2.fromOffset(Mouse.X - ObjPos.X, Mouse.Y - ObjPos.Y);
                 RenderStepped:Wait();
             end;
 
-            -- Snap window, restore everything
-            Instance.Position = Outline.Position;
-            Outline:Destroy();
-            Instance.BackgroundTransparency = 0;
+            GhostFrame.Visible = false;
 
-            if ContentFrame then
-                ContentFrame.Visible = true;
-            end;
+            -- Snap window to ghost's final position
+            Instance.Position = UDim2.new(
+                0, Mouse.X - ObjPos.X + (Instance.Size.X.Offset * Instance.AnchorPoint.X),
+                0, Mouse.Y - ObjPos.Y + (Instance.Size.Y.Offset * Instance.AnchorPoint.Y)
+            );
         end;
     end)
 end;
@@ -3112,7 +3109,7 @@ function Library:CreateWindow(...)
         BorderColor3 = 'AccentColor';
     });
 
-    Library:MakeDraggable(Outer, 25, Inner);
+    Library:MakeDraggable(Outer, 25);
 
 
     local WindowLabel = Library:CreateLabel({
