@@ -214,7 +214,7 @@ function Library:CreateLabel(Properties, IsHud)
     return Library:Create(_Instance, Properties);
 end;
 
-function Library:MakeDraggable(Instance, Cutoff)
+function Library:MakeDraggable(Instance, Cutoff, ContentFrame)
     Instance.Active = true;
 
     Instance.InputBegan:Connect(function(Input)
@@ -228,19 +228,42 @@ function Library:MakeDraggable(Instance, Cutoff)
                 return;
             end;
 
+            -- Outline-drag: hide contents, show a wireframe ghost
+            if ContentFrame then
+                ContentFrame.Visible = false;
+            end;
+
+            local Outline = Instance.new('Frame');
+            Outline.BackgroundTransparency = 1;
+            Outline.BorderSizePixel = 2;
+            Outline.BorderColor3 = Library.AccentColor;
+            Outline.Size = Instance.Size;
+            Outline.Position = Instance.Position;
+            Outline.ZIndex = 200;
+            Outline.Parent = ScreenGui;
+
             while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
-                Instance.Position = UDim2.new(
+                local NewPos = UDim2.new(
                     0,
                     Mouse.X - ObjPos.X + (Instance.Size.X.Offset * Instance.AnchorPoint.X),
                     0,
                     Mouse.Y - ObjPos.Y + (Instance.Size.Y.Offset * Instance.AnchorPoint.Y)
                 );
-
+                Outline.Position = NewPos;
                 RenderStepped:Wait();
+            end;
+
+            -- Snap window to final position, restore contents
+            Instance.Position = Outline.Position;
+            Outline:Destroy();
+
+            if ContentFrame then
+                ContentFrame.Visible = true;
             end;
         end;
     end)
 end;
+
 
 function Library:AddToolTip(InfoStr, HoverInstance)
     local X, Y = Library:GetTextBounds(InfoStr, Library.Font, 14);
@@ -3071,7 +3094,6 @@ function Library:CreateWindow(...)
         Parent = ScreenGui;
     });
 
-    Library:MakeDraggable(Outer, 25);
 
     local Inner = Library:Create('Frame', {
         BackgroundColor3 = Library.MainColor;
@@ -3087,6 +3109,9 @@ function Library:CreateWindow(...)
         BackgroundColor3 = 'MainColor';
         BorderColor3 = 'AccentColor';
     });
+
+    Library:MakeDraggable(Outer, 25, Inner);
+
 
     local WindowLabel = Library:CreateLabel({
         Position = UDim2.new(0, 7, 0, 0);
