@@ -3097,7 +3097,7 @@ function Library:CreateWindow(...)
         BorderSizePixel = 0;
         ClipsDescendants = false;
         Position = Config.Position,
-        Size = UDim2.fromOffset(Config.Size.X.Offset, Config.Size.Y.Offset + 26),
+        Size = UDim2.fromOffset(Config.Size.X.Offset, Config.Size.Y.Offset + 50),
         Visible = false;
         ZIndex = 1;
         Parent = ScreenGui;
@@ -3106,7 +3106,7 @@ function Library:CreateWindow(...)
     local Outer = Library:Create('Frame', {
         BackgroundColor3 = Color3.new(0, 0, 0);
         BorderSizePixel = 0;
-        Position = UDim2.fromOffset(0, 26);
+        Position = UDim2.fromOffset(0, 50);
         Size = Config.Size,
         ZIndex = 1;
         Parent = WrapperFrame;
@@ -3139,28 +3139,29 @@ function Library:CreateWindow(...)
         BorderSizePixel = 0;
         ClipsDescendants = false;
         Position = UDim2.fromOffset(0, 0);
-        Size = UDim2.fromOffset(Config.Size.X.Offset, 26);
+        Size = UDim2.fromOffset(Config.Size.X.Offset, 50);
         ZIndex = 5;
         Parent = WrapperFrame;
     });
 
-    Library:MakeDraggable(WrapperFrame, 26);
-
-
     local WindowLabel = Library:CreateLabel({
         Position = UDim2.new(0, 7, 0, 0);
-        Size = UDim2.new(0, 0, 0, 25);
+        Size = UDim2.new(1, -14, 0, 25);
         Text = Config.Title or '';
         TextXAlignment = Enum.TextXAlignment.Left;
-        ZIndex = 1;
-        Parent = Inner;
+        ZIndex = 6;
+        Parent = TabBarFrame;
     });
+
+    Library:MakeDraggable(WrapperFrame, 50);
+
+
 
     local MainSectionOuter = Library:Create('Frame', {
         BackgroundColor3 = Library.BackgroundColor;
         BorderColor3 = Library.OutlineColor;
-        Position = UDim2.new(0, 8, 0, 25);
-        Size = UDim2.new(1, -16, 1, -33);
+        Position = UDim2.new(0, 8, 0, 0);
+        Size = UDim2.new(1, -16, 1, -8);
         ZIndex = 1;
         Parent = Inner;
     });
@@ -3186,8 +3187,8 @@ function Library:CreateWindow(...)
 
     local TabArea = Library:Create('Frame', {
         BackgroundTransparency = 1;
-        Position = UDim2.new(0, 8, 0, 3);
-        Size = UDim2.new(1, -16, 1, -3);
+        Position = UDim2.new(0, 8, 0, 28);
+        Size = UDim2.new(1, -16, 1, -28);
         ZIndex = 5;
         Parent = TabBarFrame;
     });
