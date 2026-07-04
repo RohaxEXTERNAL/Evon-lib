@@ -1209,7 +1209,6 @@ do
             ZIndex = 110;
             Parent = Library.KeybindContainer;
         },  true);
-        Library:AddToRegistry(ContainerLabel, { TextColor3 = 'FontColor' });
 
         local Modes = Info.Modes or { 'Always', 'Toggle', 'Hold' };
         local ModeButtons = {};
@@ -1272,9 +1271,7 @@ do
             ContainerLabel.Visible = true;
             ContainerLabel.TextColor3 = State and Library.AccentColor or Library.FontColor;
 
-            if Library.RegistryMap[ContainerLabel] then
-                Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
-            end;
+            Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
 
             local YSize = 0
             local XSize = 0
